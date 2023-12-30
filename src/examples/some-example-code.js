@@ -6,9 +6,11 @@
 const TYPE_CAT = "cat";
 const TYPE_DOG = "dog";
 
+// Will be shifted to 'bar = "bar"
 const foo = "bar";
 
 // Will be shifted to "Roxie", "Prumsche" and Zoë"
+// Will be shifted to "animals"
 const cats = [
   { name: "roxie", type: TYPE_DOG },
   { name: "prumsche", type: TYPE_CAT },
@@ -17,8 +19,10 @@ const cats = [
 
 const display = () => {
   // Will be shifted to forEach
+  // Will be shifted to "animals"
   for (const cat of cats) {
-    console.log("name: " + cat.name);
+    // Will be shifted to string interpolation
+    console.log("name: " + cat.name + ", type: " + cat.type);
   }
 };
 

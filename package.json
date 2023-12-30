@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "cli": "jscodeshift -t './src/transformers/basic-transformer.js' ./src/examples/**.js",
+    "start": "node main.js"
+  },
   "dependencies": {
     "jscodeshift": "0.15.1",
     "ast-types": "0.14.2"
