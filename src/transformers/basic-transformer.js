@@ -5,6 +5,11 @@
  * https://astexplorer.net/ with 'recast' parser
  *
  */
+
+const utils = {
+  toSentenceCase: (str) => `${str.substring(0, 1).toUpperCase()}${str.substring(1)}`,
+};
+
 const basicTransformer = (fileInfo, api, _options) => {
   const j = api.jscodeshift;
   // Abstract Syntax Tree, a.k.a ast
@@ -59,11 +64,31 @@ const basicTransformer = (fileInfo, api, _options) => {
       (path) => !!path.node.declarations.find((d) => ["TYPE_CAT", "TYPE_DOG"].includes(d.id.name))
     )
     .forEach((path) => {
-      const toSentenceCase = (str) => `${str.substring(0, 1).toUpperCase()}${str.substring(1)}`;
-      path.node.declarations.forEach((d) => (d.init.value = toSentenceCase(d.init.value)));
+      path.node.declarations.forEach((d) => (d.init.value = utils.toSentenceCase(d.init.value)));
     });
 
   return ast.toSource();
 };
+
+/**
+ * Processing 1 files...
+ * Spawning 1 workers...
+ * Sending 1 files to free worker...
+ * All done.
+ * Results:
+ * 0 errors
+ * 0 unmodified
+ * 0 skipped
+ * 1 ok
+ * Time elapsed: 0.226seconds
+ * {
+ *   stats: {},
+ *   timeElapsed: '0.226',
+ *   error: 0,
+ *   ok: 1,
+ *   nochange: 0,
+ *   skip: 0
+ * }
+ */
 
 module.exports = basicTransformer;
