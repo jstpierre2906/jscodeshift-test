@@ -14,8 +14,45 @@ const basicTransformer = (fileInfo, api, _options) => {
   ast.find(j.Identifier, { name: "foo" }).replaceWith((path) => j.identifier("bar"));
 
   // Traversing the file:
+  //
   // Rename 'cat' as 'Cat' and 'dog' as 'Dog'
   // in 'const TYPE_CAT = "cat";', 'const TYPE_DOG = "dog";' variableDeclaration
+  //
+  // Example of path.node.declarations (unfiltered)
+  // [
+  //   Node {
+  //     type: 'VariableDeclarator',
+  //     start: 100,
+  //     end: 116,
+  //     loc: SourceLocation {
+  //       start: [Position],
+  //       end: [Position],
+  //       filename: undefined,
+  //       identifierName: undefined,
+  //       lines: [Lines],
+  //       tokens: [Array],
+  //       indent: 0
+  //     },
+  //     id: Node {
+  //       type: 'Identifier',
+  //       start: 100,
+  //       end: 108,
+  //       loc: [SourceLocation],
+  //       name: 'TYPE_CAT',
+  //       optional: false,
+  //       typeAnnotation: null
+  //     },
+  //     init: Node {
+  //       type: 'Literal',
+  //       start: 111,
+  //       end: 116,
+  //       loc: [SourceLocation],
+  //       value: 'cat',
+  //       raw: '"cat"'
+  //     }
+  //   }
+  // ]
+
   ast
     .find(j.VariableDeclaration)
     .filter(
