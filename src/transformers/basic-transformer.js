@@ -15,15 +15,13 @@ const basicTransformer = (fileInfo, api, _options) => {
   // Abstract Syntax Tree, a.k.a ast
   const ast = j(fileInfo.source);
 
-  // Rename variable 'foo' as 'bar', e.g. when we know the name of the var, a.k.a the Identifier
+  // Renaming variable 'foo' as 'bar', e.g. when we know the name of the var, a.k.a the Identifier
   ast.find(j.Identifier, { name: "foo" }).replaceWith((path) => j.identifier("bar"));
 
   // Traversing the file:
   //
-  // Rename 'cat' as 'Cat' and 'dog' as 'Dog'
-  // in 'const TYPE_CAT = "cat";', 'const TYPE_DOG = "dog";' variableDeclaration
+  // Examples of path.node.declarations (unfiltered)
   //
-  // Example of path.node.declarations (unfiltered)
   // [
   //   Node {
   //     type: 'VariableDeclarator',
@@ -57,38 +55,75 @@ const basicTransformer = (fileInfo, api, _options) => {
   //     }
   //   }
   // ]
+  //
+  // [
+  //   Node {
+  //     type: 'VariableDeclarator',
+  //     start: 220,
+  //     end: 342,
+  //     loc: SourceLocation {
+  //       start: [Position],
+  //       end: [Position],
+  //       filename: undefined,
+  //       identifierName: undefined,
+  //       lines: [Lines],
+  //       tokens: [Array],
+  //       indent: 0
+  //     },
+  //     id: Node {
+  //       type: 'Identifier',
+  //       start: 220,
+  //       end: 224,
+  //       loc: [SourceLocation],
+  //       name: 'cats',
+  //       optional: false,
+  //       typeAnnotation: null
+  //     },
+  //     init: Node {
+  //       type: 'ArrayExpression',
+  //       start: 227,
+  //       end: 342,
+  //       loc: [SourceLocation],
+  //       extra: [Object],
+  //       elements: [Array]
+  //     }
+  //   }
+  // ]
 
+  // Renaming 'cat' as 'Cat' and 'dog' as 'Dog'
+  // in 'const TYPE_CAT = "cat";', 'const TYPE_DOG = "dog";' variableDeclaration
   ast
     .find(j.VariableDeclaration)
     .filter(
       (path) => !!path.node.declarations.find((d) => ["TYPE_CAT", "TYPE_DOG"].includes(d.id.name))
     )
     .forEach((path) => {
-      path.node.declarations.forEach((d) => (d.init.value = utils.toSentenceCase(d.init.value)));
+      path.node.declarations.forEach((d) => {
+        d.init.value = utils.toSentenceCase(d.init.value);
+        d.init.raw = `"${utils.toSentenceCase(d.init.value)}"`;
+      });
     });
+
+  // Renaming const 'cats' as 'animals'
+  // Renaming 'animals' name key to upperCase,e.g. "Roxie", "Prumsche" and Zoë"
+  ast
+    .find(j.VariableDeclaration)
+    .filter((path) => path.node.declarations.find((d) => d.id.name === "cats"))
+    .forEach((path) =>
+      path.node.declarations.forEach((d) => {
+        d.id.name = "animals";
+        d.init.elements.forEach((e) =>
+          e.properties
+            .filter((p) => p.value.type === "Literal")
+            .forEach((p) => {
+              p.value.value = utils.toSentenceCase(p.value.value);
+              p.value.raw = `"${utils.toSentenceCase(p.value.value)}"`;
+            })
+        );
+      })
+    );
 
   return ast.toSource();
 };
-
-/**
- * Processing 1 files...
- * Spawning 1 workers...
- * Sending 1 files to free worker...
- * All done.
- * Results:
- * 0 errors
- * 0 unmodified
- * 0 skipped
- * 1 ok
- * Time elapsed: 0.226seconds
- * {
- *   stats: {},
- *   timeElapsed: '0.226',
- *   error: 0,
- *   ok: 1,
- *   nochange: 0,
- *   skip: 0
- * }
- */
 
 module.exports = basicTransformer;

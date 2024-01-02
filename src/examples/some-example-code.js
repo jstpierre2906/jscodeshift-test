@@ -9,9 +9,9 @@ const TYPE_DOG = "dog";
 // Will be shifted to 'bar = "bar"
 const foo = "bar";
 
-// Will be shifted to "Roxie", "Prumsche" and Zoë"
 // Will be shifted to "animals"
 const cats = [
+  // Will be shifted to "Roxie", "Prumsche" and Zoë"
   { name: "roxie", type: TYPE_DOG },
   { name: "prumsche", type: TYPE_CAT },
   { name: "zoë", type: TYPE_CAT },
