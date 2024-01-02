@@ -98,10 +98,7 @@ const basicTransformer = (fileInfo, api, _options) => {
       (path) => !!path.node.declarations.find((d) => ["TYPE_CAT", "TYPE_DOG"].includes(d.id.name))
     )
     .forEach((path) => {
-      path.node.declarations.forEach((d) => {
-        d.init.value = utils.toSentenceCase(d.init.value);
-        d.init.raw = `"${utils.toSentenceCase(d.init.value)}"`;
-      });
+      path.node.declarations.forEach((d) => (d.init.value = utils.toSentenceCase(d.init.value)));
     });
 
   // Renaming const 'cats' as 'animals'
@@ -115,12 +112,41 @@ const basicTransformer = (fileInfo, api, _options) => {
         d.init.elements.forEach((e) =>
           e.properties
             .filter((p) => p.value.type === "Literal")
-            .forEach((p) => {
-              p.value.value = utils.toSentenceCase(p.value.value);
-              p.value.raw = `"${utils.toSentenceCase(p.value.value)}"`;
-            })
+            .forEach((p) => (p.value.value = utils.toSentenceCase(p.value.value)))
         );
       })
+    );
+
+  // Renaming forOfStatement values
+  ast
+    .find(j.VariableDeclaration)
+    .filter((path) => path.node.declarations.find((d) => d.id.name === "display"))
+    .forEach((path) =>
+      path.node.declarations.forEach((d) =>
+        d.init.body.body
+          .filter((b) => b.type === "ForOfStatement")
+          .forEach((b) => {
+            // Modifying: for (const animal of animals) {
+            b.left.declarations
+              .filter((d) => d.id.name === "cat")
+              .forEach((d) => (d.id.name = "animal"));
+            b.right.name = "animals";
+
+            b.body.body
+              .filter(
+                (b2) => b2.type === "ExpressionStatement" && b2.expression.type === "CallExpression"
+              )
+              .forEach((b2) =>
+                b2.expression.arguments
+                  .filter((a) => a.type === "BinaryExpression")
+                  // Modifying console.log("name: " + cat.name + ", type: " + cat.type);
+                  .forEach((a) => {
+                    a.left.left.right.object.name = "animal";
+                    a.right.object.name = "animal";
+                  })
+              );
+          })
+      )
     );
 
   return ast.toSource();
