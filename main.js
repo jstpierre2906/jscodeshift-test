@@ -1,7 +1,3 @@
-/**
- * Install: npm install -g jscodeshift
- */
-
 const { run: jscodeshift } = require("jscodeshift/src/Runner");
 const path = require("node:path");
 
