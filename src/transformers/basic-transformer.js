@@ -113,7 +113,7 @@ const basicTransformer = (fileInfo, api, _options) => {
           (e) =>
             e.properties
               .filter((p) => p.value.type === "Literal")
-              .forEach((p) => (p.value.value = utils.toSentenceCase(p.value.value))) // name: "roxie", name: "prumsche", name: "zoë",
+              .forEach((p) => (p.value.value = utils.toSentenceCase(p.value.value))) // name: "Roxie", name: "Prumsche", name: "Zoë",
         );
       })
     );
