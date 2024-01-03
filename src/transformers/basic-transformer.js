@@ -109,10 +109,11 @@ const basicTransformer = (fileInfo, api, _options) => {
     .forEach((path) =>
       path.node.declarations.forEach((d) => {
         d.id.name = "animals";
-        d.init.elements.forEach((e) =>
-          e.properties
-            .filter((p) => p.value.type === "Literal")
-            .forEach((p) => (p.value.value = utils.toSentenceCase(p.value.value)))
+        d.init.elements.forEach(
+          (e) =>
+            e.properties
+              .filter((p) => p.value.type === "Literal")
+              .forEach((p) => (p.value.value = utils.toSentenceCase(p.value.value))) // name: "roxie", name: "prumsche", name: "zoë",
         );
       })
     );
@@ -129,8 +130,8 @@ const basicTransformer = (fileInfo, api, _options) => {
             // Modifying: for (const animal of animals) {
             b.left.declarations
               .filter((d) => d.id.name === "cat")
-              .forEach((d) => (d.id.name = "animal"));
-            b.right.name = "animals";
+              .forEach((d) => (d.id.name = "animal")); // for (const animal
+            b.right.name = "animals"; // of animals) {
 
             b.body.body
               .filter(
@@ -141,8 +142,8 @@ const basicTransformer = (fileInfo, api, _options) => {
                   .filter((a) => a.type === "BinaryExpression")
                   // Modifying console.log("name: " + cat.name + ", type: " + cat.type);
                   .forEach((a) => {
-                    a.left.left.right.object.name = "animal";
-                    a.right.object.name = "animal";
+                    a.left.left.right.object.name = "animal"; // animal.name
+                    a.right.object.name = "animal"; // animal.type
                   })
               );
           })
