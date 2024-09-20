@@ -1,6 +1,7 @@
 {
   "scripts": {
     "cli": "jscodeshift -t './src/transformers/basic-transformer.js' ./src/examples/**.js",
+    "cli-html": "jscodeshift -t './src/transformers/html-transformer.js' ./src/examples/**.html --extensions=jsx,tsx,html --verbose=2",
     "start": "node main.js"
   },
   "dependencies": {
