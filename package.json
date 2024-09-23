@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "jscodeshift": "17.0.0",
-    "posthtml-parser": "0.12.1"
+    "posthtml-parser": "0.12.1",
+    "posthtml-render": "3.0.0"
   }
 }
