@@ -1,10 +1,10 @@
 {
   "scripts": {
-    "cli": "jscodeshift -t './src/transformers/basic-transformer.js' ./src/examples/**.js",
-    "cli-html": "jscodeshift -t './src/transformers/html-transformer.js' ./src/examples/**.html --extensions=jsx,tsx,html --verbose=2",
+    "cli": "jscodeshift -t './src/transformers/js-transformer.js' ./src/examples/js/**.js",
+    "cli.jsx": "jscodeshift -t './src/transformers/jsx-transformer.js' ./src/examples/jsx/**.jsx --extensions=jsx,tsx",
     "start": "node main.js"
   },
   "dependencies": {
-    "jscodeshift": "0.15.1"
+    "jscodeshift": "17.0.0"
   }
 }
