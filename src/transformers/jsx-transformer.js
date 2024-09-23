@@ -1,4 +1,4 @@
-const htmlTransformer = (fileInfo, api, _options) => {
+const jsxTransformer = (fileInfo, api, _options) => {
   const j = api.jscodeshift;
   // Abstract Syntax Tree, a.k.a ast
   const ast = j(fileInfo.source);
@@ -19,4 +19,4 @@ const htmlTransformer = (fileInfo, api, _options) => {
     .toSource();
 };
 
-module.exports = htmlTransformer;
+module.exports = jsxTransformer;

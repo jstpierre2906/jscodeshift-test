@@ -2,7 +2,7 @@ const { run: jscodeshift } = require("jscodeshift/src/Runner");
 const path = require("node:path");
 
 const transformPath = path.resolve("src/transformers/basic-transformer.js");
-const paths = ["src/examples/some-example-code.js"]; // <-- glob isn't supported
+const paths = ["src/examples/js/example-code.js"];
 const options = {
   dry: false,
   print: false,

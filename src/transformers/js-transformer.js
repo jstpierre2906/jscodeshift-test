@@ -10,7 +10,7 @@ const utils = {
   toSentenceCase: (str) => `${str.substring(0, 1).toUpperCase()}${str.substring(1)}`,
 };
 
-const basicTransformer = (fileInfo, api, _options) => {
+const jsTransformer = (fileInfo, api, _options) => {
   const j = api.jscodeshift;
   // Abstract Syntax Tree, a.k.a ast
   const ast = j(fileInfo.source);
@@ -153,4 +153,4 @@ const basicTransformer = (fileInfo, api, _options) => {
   return ast.toSource();
 };
 
-module.exports = basicTransformer;
+module.exports = jsTransformer;

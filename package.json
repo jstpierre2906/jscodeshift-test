@@ -1,10 +1,13 @@
 {
+  "type": "commonjs",
   "scripts": {
-    "cli": "jscodeshift -t './src/transformers/js-transformer.js' ./src/examples/js/**.js",
-    "cli.jsx": "jscodeshift -t './src/transformers/jsx-transformer.js' ./src/examples/jsx/**.jsx --extensions=jsx,tsx",
+    "cli": "jscodeshift -t ./src/transformers/js-transformer.js ./src/examples/js/**.js",
+    "cli.jsx": "jscodeshift -t ./src/transformers/jsx-transformer.js ./src/examples/jsx/**.jsx --extensions=jsx,tsx",
+    "cli.html": "node ./src/transformers/html-transformer.js",
     "start": "node main.js"
   },
   "dependencies": {
-    "jscodeshift": "17.0.0"
+    "jscodeshift": "17.0.0",
+    "posthtml-parser": "0.12.1"
   }
 }
