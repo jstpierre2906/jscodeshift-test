@@ -13,6 +13,9 @@ const transformAST = () => {
   // The AST might not be formed to what jscodeshift expects
   // Maybe doing manual transforms with vanilla JS is the way to go, since
   // the transforms themselves are done that way.
+  //
+  // Edit: since we have to rebuild the HTML after transformation,
+  // we have to somehow get the AST accepted by jscodeshift.
   const root = j(ast);
   return root.toSource();
 };
