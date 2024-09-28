@@ -6,7 +6,7 @@ const { render: postHTMLRender } = require("posthtml-render");
 // <div class="red">Just a div</div>
 const markup = fs.readFileSync(`${__dirname}/../examples/html/example-markup.html`, "utf-8");
 const modifiedHTML = postHTMLRender(
-  ((ast) => {
+  (({ ast, newTextContent, nodeTargetPredicate }) => {
     console.log(ast);
     // Parsed HMTL as AST:
     //   [
@@ -14,16 +14,24 @@ const modifiedHTML = postHTMLRender(
     //     '\n'
     //   ]
     ast
-      .filter((node) => node.tag === "div")
+      .filter((node) => nodeTargetPredicate(node))
       .forEach((node) => {
         node.tag = "section";
         node.attrs.class = "blue";
-        node.content[0] = node.content[0].replace("div", "section");
+        node.content[0] = {
+          tag: "span",
+          attrs: { class: "some-stylin" },
+          content: newTextContent,
+        };
       });
     return ast;
-  })(postHTMLParser(markup))
+  })({
+    ast: postHTMLParser(markup),
+    newTextContent: "Works!",
+    nodeTargetPredicate: (node) => node.tag === "div" && node.attrs.class === "red",
+  })
 );
 
 console.log(modifiedHTML);
 // Modified HTML:
-// <section class="blue">Just a section</section>
+// <section class="blue"><span class="some-stylin">Works!</span></section>
