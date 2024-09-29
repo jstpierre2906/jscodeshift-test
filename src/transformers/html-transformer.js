@@ -2,9 +2,8 @@ const fs = require("node:fs");
 const { parser: postHTMLParser } = require("posthtml-parser");
 const { render: postHTMLRender } = require("posthtml-render");
 
-const markup = fs.readFileSync(`${__dirname}/../examples/html/example-markup.html`, {
-  encoding: "utf-8",
-});
+const file = `${__dirname}/../examples/html/example-markup.html`;
+const markup = fs.readFileSync(file, { encoding: "utf-8" });
 // Original HTML:
 // <!DOCTYPE html>
 // <html lang="en">
@@ -22,36 +21,34 @@ const markup = fs.readFileSync(`${__dirname}/../examples/html/example-markup.htm
 const modifiedHTML = postHTMLRender(
   (({ ast, nodeTargetPredicate, nodeTargetTransformer }) => {
     let targetFound = false;
-    const transformAndReport = (item) => {
-      nodeTargetTransformer(item);
+    const applyTransform = (item) => {
       targetFound = true;
+      try {
+        nodeTargetTransformer(item);
+      } catch (error) {
+        console.error(error);
+      }
     };
     ast.forEach((firstLevelNode) => {
-      if (targetFound) {
-        return;
-      }
-      const recurse = (node) => {
-        if (targetFound) {
-          return;
-        }
+      if (targetFound) return;
+      const recurseThroughHTMLTree = (node) => {
+        if (targetFound) return;
         if (node.tag && node.content) {
           if (nodeTargetPredicate(node)) {
-            transformAndReport(node);
+            applyTransform(node);
             return;
           }
           node.content.forEach((nodeContentItem) => {
-            if (targetFound) {
-              return;
-            }
+            if (targetFound) return;
             if (nodeTargetPredicate(nodeContentItem)) {
-              transformAndReport(nodeContentItem);
+              applyTransform(nodeContentItem);
               return;
             }
-            recurse(nodeContentItem);
+            recurseThroughHTMLTree(nodeContentItem);
           });
         }
       };
-      recurse(firstLevelNode);
+      recurseThroughHTMLTree(firstLevelNode);
     });
     return ast;
   })({
@@ -84,6 +81,4 @@ console.log(modifiedHTML);
 //     </div>
 //   </body>
 // </html>
-fs.writeFileSync(`${__dirname}/../examples/html/example-markup.html`, modifiedHTML, {
-  encoding: "utf-8",
-});
+fs.writeFileSync(file, modifiedHTML, { encoding: "utf-8" });
