@@ -2,18 +2,55 @@ const fs = require("node:fs");
 const { parser: postHTMLParser } = require("posthtml-parser");
 const { render: postHTMLRender } = require("posthtml-render");
 
-// Original HTML:
-// <div class="red">Just a div</div>
 const markup = fs.readFileSync(`${__dirname}/../examples/html/example-markup.html`, "utf-8");
+// Original HTML:
+// <!DOCTYPE html>
+// <html lang="en">
+//   <head>
+//     <meta charset="UTF-8" />
+//     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+//     <title>Document</title>
+//   </head>
+//   <body>
+//     <div id="container">
+//       <div class="red">Just a div</div>
+//     </div>
+//   </body>
+// </html>
 const modifiedHTML = postHTMLRender(
   (({ ast, nodeTargetPredicate, nodeTargetTransformer }) => {
-    console.log(ast);
-    // Parsed HMTL as AST:
-    //   [
-    //     { tag: 'div', attrs: { class: 'red' }, content: [ 'Just a div' ] },
-    //     '\n'
-    //   ]
-    ast.filter((node) => nodeTargetPredicate(node)).forEach((node) => nodeTargetTransformer(node));
+    let targetFound = false;
+    const transformAndReport = (item) => {
+      nodeTargetTransformer(item);
+      targetFound = true;
+    };
+    ast.forEach((firstLevelNode) => {
+      if (targetFound) {
+        return;
+      }
+      const recurse = (node) => {
+        if (targetFound) {
+          return;
+        }
+        if (node.tag && node.content) {
+          if (nodeTargetPredicate(node)) {
+            transformAndReport(node)
+            return;
+          }
+          node.content.forEach((nodeContentItem) => {
+            if (targetFound) {
+              return;
+            }
+            if (nodeTargetPredicate(nodeContentItem)) {
+              transformAndReport(nodeContentItem)
+              return;
+            }
+            recurse(nodeContentItem);
+          });
+        }
+      };
+      recurse(firstLevelNode);
+    });
     return ast;
   })({
     ast: postHTMLParser(markup),
@@ -31,4 +68,16 @@ const modifiedHTML = postHTMLRender(
 );
 console.log(modifiedHTML);
 // Modified HTML:
-// <section class="blue"><span class="some-stylin">Works!</span></section>
+// <!DOCTYPE html>
+// <html lang="en">
+//   <head>
+//     <meta charset="UTF-8">
+//     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+//     <title>Document</title>
+//   </head>
+//   <body>
+//     <div id="container">
+//       <section class="blue"><span class="some-stylin">works!</span></section>
+//     </div>
+//   </body>
+// </html>
