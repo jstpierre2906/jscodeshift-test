@@ -20,9 +20,7 @@ const fileContent = fs.readFileSync(file, { encoding: "utf-8" });
 // </html>
 const modifiedHTML = postHTMLRender(
   (({ ast, nodeTargetPredicate, nodeTargetTransformer }) => {
-    let targetFound = false;
-    const applyTransform = (item) => {
-      targetFound = true;
+    const attemptTransform = (item) => {
       try {
         nodeTargetTransformer(item);
       } catch (error) {
@@ -30,19 +28,14 @@ const modifiedHTML = postHTMLRender(
       }
     };
     ast.forEach((firstLevelNode) => {
-      if (targetFound) return;
       const recurseThroughHTMLTree = (node) => {
-        if (targetFound) return;
         if (node.tag && node.content) {
           if (nodeTargetPredicate(node)) {
-            applyTransform(node);
-            return;
+            attemptTransform(node);
           }
-          node.content.forEach((nodeContentItem) => {
-            if (targetFound) return;
+          Array.isArray(node.content) && node.content.forEach((nodeContentItem) => {
             if (nodeTargetPredicate(nodeContentItem)) {
-              applyTransform(nodeContentItem);
-              return;
+              attemptTransform(nodeContentItem);
             }
             recurseThroughHTMLTree(nodeContentItem);
           });
