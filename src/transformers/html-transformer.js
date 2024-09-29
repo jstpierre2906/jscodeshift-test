@@ -18,30 +18,37 @@ const fileContent = fs.readFileSync(file, { encoding: "utf-8" });
 //     </div>
 //   </body>
 // </html>
+const attemptTransform = ({ node, nodeTargetTransformer }) => {
+  try {
+    nodeTargetTransformer(node);
+  } catch (error) {
+    console.error(error);
+  }
+};
+const recurseThroughHTMLTree = ({ node, nodeTargetPredicate, nodeTargetTransformer }) => {
+  if (node.tag && node.content) {
+    if (nodeTargetPredicate(node)) {
+      attemptTransform({ node, nodeTargetTransformer });
+    }
+    if (Array.isArray(node.content)) {
+      node.content.forEach((nodeContentItem) => {
+        if (nodeTargetPredicate(nodeContentItem)) {
+          attemptTransform({ node: nodeContentItem, nodeTargetTransformer });
+        }
+        recurseThroughHTMLTree({
+          node: nodeContentItem,
+          nodeTargetPredicate,
+          nodeTargetTransformer,
+        });
+      });
+    }
+  }
+};
 const modifiedHTML = postHTMLRender(
   (({ ast, nodeTargetPredicate, nodeTargetTransformer }) => {
-    const attemptTransform = (item) => {
-      try {
-        nodeTargetTransformer(item);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    const recurseThroughHTMLTree = (node) => {
-      if (node.tag && node.content) {
-        if (nodeTargetPredicate(node)) {
-          attemptTransform(node);
-        }
-        Array.isArray(node.content) &&
-          node.content.forEach((nodeContentItem) => {
-            if (nodeTargetPredicate(nodeContentItem)) {
-              attemptTransform(nodeContentItem);
-            }
-            recurseThroughHTMLTree(nodeContentItem);
-          });
-      }
-    };
-    ast.forEach((firstLevelNode) => recurseThroughHTMLTree(firstLevelNode));
+    ast.forEach((firstLevelNode) =>
+      recurseThroughHTMLTree({ node: firstLevelNode, nodeTargetPredicate, nodeTargetTransformer })
+    );
     return ast;
   })({
     ast: postHTMLParser(fileContent),
