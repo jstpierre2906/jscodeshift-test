@@ -27,22 +27,21 @@ const modifiedHTML = postHTMLRender(
         console.error(error);
       }
     };
-    ast.forEach((firstLevelNode) => {
-      const recurseThroughHTMLTree = (node) => {
-        if (node.tag && node.content) {
-          if (nodeTargetPredicate(node)) {
-            attemptTransform(node);
-          }
-          Array.isArray(node.content) && node.content.forEach((nodeContentItem) => {
+    const recurseThroughHTMLTree = (node) => {
+      if (node.tag && node.content) {
+        if (nodeTargetPredicate(node)) {
+          attemptTransform(node);
+        }
+        Array.isArray(node.content) &&
+          node.content.forEach((nodeContentItem) => {
             if (nodeTargetPredicate(nodeContentItem)) {
               attemptTransform(nodeContentItem);
             }
             recurseThroughHTMLTree(nodeContentItem);
           });
-        }
-      };
-      recurseThroughHTMLTree(firstLevelNode);
-    });
+      }
+    };
+    ast.forEach((firstLevelNode) => recurseThroughHTMLTree(firstLevelNode));
     return ast;
   })({
     ast: postHTMLParser(fileContent),
