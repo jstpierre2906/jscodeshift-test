@@ -2,7 +2,9 @@ const fs = require("node:fs");
 const { parser: postHTMLParser } = require("posthtml-parser");
 const { render: postHTMLRender } = require("posthtml-render");
 
-const markup = fs.readFileSync(`${__dirname}/../examples/html/example-markup.html`, "utf-8");
+const markup = fs.readFileSync(`${__dirname}/../examples/html/example-markup.html`, {
+  encoding: "utf-8",
+});
 // Original HTML:
 // <!DOCTYPE html>
 // <html lang="en">
@@ -34,7 +36,7 @@ const modifiedHTML = postHTMLRender(
         }
         if (node.tag && node.content) {
           if (nodeTargetPredicate(node)) {
-            transformAndReport(node)
+            transformAndReport(node);
             return;
           }
           node.content.forEach((nodeContentItem) => {
@@ -42,7 +44,7 @@ const modifiedHTML = postHTMLRender(
               return;
             }
             if (nodeTargetPredicate(nodeContentItem)) {
-              transformAndReport(nodeContentItem)
+              transformAndReport(nodeContentItem);
               return;
             }
             recurse(nodeContentItem);
@@ -64,15 +66,16 @@ const modifiedHTML = postHTMLRender(
         content: "works!",
       };
     },
-  })
+  }),
+  { closingSingleTag: "slash" }
 );
 console.log(modifiedHTML);
 // Modified HTML:
 // <!DOCTYPE html>
 // <html lang="en">
 //   <head>
-//     <meta charset="UTF-8">
-//     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+//     <meta charset="UTF-8" />
+//     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 //     <title>Document</title>
 //   </head>
 //   <body>
@@ -81,3 +84,6 @@ console.log(modifiedHTML);
 //     </div>
 //   </body>
 // </html>
+fs.writeFileSync(`${__dirname}/../examples/html/example-markup.html`, modifiedHTML, {
+  encoding: "utf-8",
+});
