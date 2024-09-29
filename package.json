@@ -3,7 +3,7 @@
   "scripts": {
     "cli": "jscodeshift -t ./src/transformers/js-transformer.js ./src/examples/js/**.js",
     "cli.jsx": "jscodeshift -t ./src/transformers/jsx-transformer.js ./src/examples/jsx/**.jsx --extensions=jsx,tsx",
-    "cli.html": "node ./src/transformers/html-transformer.js",
+    "cli.html": "node ./src/transformers/html/html-transformer.js",
     "start": "node main.js"
   },
   "dependencies": {
