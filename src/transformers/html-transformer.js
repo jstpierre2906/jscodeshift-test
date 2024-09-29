@@ -3,7 +3,7 @@ const { parser: postHTMLParser } = require("posthtml-parser");
 const { render: postHTMLRender } = require("posthtml-render");
 
 const file = `${__dirname}/../examples/html/example-markup.html`;
-const markup = fs.readFileSync(file, { encoding: "utf-8" });
+const fileContent = fs.readFileSync(file, { encoding: "utf-8" });
 // Original HTML:
 // <!DOCTYPE html>
 // <html lang="en">
@@ -52,7 +52,7 @@ const modifiedHTML = postHTMLRender(
     });
     return ast;
   })({
-    ast: postHTMLParser(markup),
+    ast: postHTMLParser(fileContent),
     nodeTargetPredicate: (node) => node.tag === "div" && node.attrs.class === "red",
     nodeTargetTransformer: (node) => {
       node.tag = "section";
