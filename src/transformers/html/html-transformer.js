@@ -1,21 +1,21 @@
-const htmlTransformer = ({ ast, nodeTargetPredicate, nodeTargetTransformer }) => {
-  const attemptTransform = ({ node }) => {
-    try {
-      nodeTargetTransformer(node);
-    } catch (error) {
-      console.error(error);
-    }
+const htmlTransformer = ({ ast, transformers }) => {
+  const locateAndTransform = ({ node }) => {
+    transformers
+      .filter((t) => t.nodeTargetPredicate(node))
+      .forEach((t) => {
+        try {
+          t.nodeTargetTransformer(node);
+        } catch (error) {
+          console.error(error);
+        }
+      });
   };
   const recurseThroughHTMLTree = ({ node }) => {
     if (node.tag && node.content) {
-      if (nodeTargetPredicate(node)) {
-        attemptTransform({ node });
-      }
+      locateAndTransform({ node });
       if (Array.isArray(node.content)) {
         node.content.forEach((nodeContentItem) => {
-          if (nodeTargetPredicate(nodeContentItem)) {
-            attemptTransform({ node: nodeContentItem });
-          }
+          locateAndTransform({ node: nodeContentItem });
           recurseThroughHTMLTree({ node: nodeContentItem });
         });
       }
