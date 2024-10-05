@@ -1,3 +1,4 @@
+// @ts-nocheck
 const fs = require("node:fs");
 const { parser: postHTMLParser } = require("posthtml-parser");
 const { render: postHTMLRender } = require("posthtml-render");
@@ -36,7 +37,7 @@ const transformedAST = htmlTransformer({
         if (foundIndex !== -1) {
           node.content = node.content.filter((_contentItem, index) => {
             // Also removing trailing carriage return, i.e. not leaving an empty line after node removal.
-            if (/^\n\s+$/.test(node.content[foundIndex + 1])) {
+            if (/^(\n|\r\n)\s+$/.test(node.content[foundIndex + 1])) {
               return index !== foundIndex && index !== foundIndex + 1;
             }
             return index !== foundIndex;
