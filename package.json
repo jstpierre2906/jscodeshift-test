@@ -4,11 +4,13 @@
     "cli": "jscodeshift -t ./src/transformers/js-transformer.js ./src/examples/js/**.js",
     "cli.jsx": "jscodeshift -t ./src/transformers/jsx-transformer.js ./src/examples/jsx/**.jsx --extensions=jsx,tsx",
     "cli.html": "node ./src/transformers/html/main.js",
+    "cli.css": "node ./src/transformers/css/main.js",
     "start": "node main.js"
   },
   "dependencies": {
     "jscodeshift": "17.0.0",
     "posthtml-parser": "0.12.1",
-    "posthtml-render": "3.0.0"
+    "posthtml-render": "3.0.0",
+    "postcss": "~8.4.47"
   }
 }

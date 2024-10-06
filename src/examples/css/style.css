@@ -1,0 +1,9 @@
+.red-sector-a {
+  font-size: 1.5em;
+  .distant-early-warning {
+    color: orangered;
+    .kid-gloves {
+      font-weight: bold;
+    }
+  }
+}
