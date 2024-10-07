@@ -1,4 +1,4 @@
-const htmlTransformer = ({ ast, transformers }) => {
+const cssTransformer = ({ ast, transformers }) => {
   const locateAndTransform = ({ node }) => {
     transformers
       .filter((t) => t.nodeTargetPredicate(node))
@@ -10,19 +10,19 @@ const htmlTransformer = ({ ast, transformers }) => {
         }
       });
   };
-  const recurseThroughHTMLTree = ({ node }) => {
-    if (node.tag && node.content) {
+  const recurseThroughCSSTree = ({ node }) => {
+    if (node.selector) {
       locateAndTransform({ node });
-      if (Array.isArray(node.content)) {
-        node.content.forEach((nodeContentItem) => {
-          locateAndTransform({ node: nodeContentItem });
-          recurseThroughHTMLTree({ node: nodeContentItem });
-        });
-      }
+    }
+    if (node.nodes && Array.isArray(node.nodes)) {
+      node.nodes.forEach((nodeContent) => {
+        locateAndTransform({ node: nodeContent });
+        recurseThroughCSSTree({ node: nodeContent });
+      });
     }
   };
-  ast.forEach((firstLevelNode) => recurseThroughHTMLTree({ node: firstLevelNode }));
+  ast.nodes.forEach((firstLevelNode) => recurseThroughCSSTree({ node: firstLevelNode }));
   return ast;
 };
 
-module.exports = htmlTransformer;
+module.exports = cssTransformer;
