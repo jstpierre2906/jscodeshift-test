@@ -5,7 +5,7 @@ const cssTransformer = ({ ast, transformers }) => {
     if (node.selector) {
       locateAndTransform({ node, transformers });
     }
-    if (node.nodes && Array.isArray(node.nodes)) {
+    if (Array.isArray(node?.nodes)) {
       node.nodes.forEach((nodeContent) => {
         locateAndTransform({ node: nodeContent, transformers });
         recurseThroughCSSTree({ node: nodeContent });

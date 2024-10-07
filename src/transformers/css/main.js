@@ -16,17 +16,21 @@ const transformedAST = cssTransformer({
           node.type === "rule" &&
           node.selector === ".red-sector-a" &&
           !!(() => {
-            return node?.nodes.filter((secondLevelNode) => {
-              return (
-                secondLevelNode.type === "rule" &&
-                secondLevelNode.selector === ".distant-early-warning" &&
-                secondLevelNode?.nodes.filter((thirdLevelNode) => {
-                  return (
-                    thirdLevelNode.type === "rule" && thirdLevelNode.selector === ".kid-gloves"
-                  );
-                })
-              );
-            });
+            return (
+              Array.isArray(node?.nodes) &&
+              node.nodes.filter((secondLevelNode) => {
+                return (
+                  secondLevelNode.type === "rule" &&
+                  secondLevelNode.selector === ".distant-early-warning" &&
+                  Array.isArray(secondLevelNode?.nodes) &&
+                  secondLevelNode.nodes.filter((thirdLevelNode) => {
+                    return (
+                      thirdLevelNode?.type === "rule" && thirdLevelNode?.selector === ".kid-gloves"
+                    );
+                  })
+                );
+              })
+            );
           })()
         );
       },
