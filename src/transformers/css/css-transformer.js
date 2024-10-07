@@ -1,22 +1,13 @@
+const locateAndTransform = require("../common-css-html/locate-and-transform.js");
+
 const cssTransformer = ({ ast, transformers }) => {
-  const locateAndTransform = ({ node }) => {
-    transformers
-      .filter((t) => t.nodeTargetPredicate(node))
-      .forEach((t) => {
-        try {
-          t.nodeTargetTransformer(node);
-        } catch (error) {
-          console.error(error);
-        }
-      });
-  };
   const recurseThroughCSSTree = ({ node }) => {
     if (node.selector) {
-      locateAndTransform({ node });
+      locateAndTransform({ node, transformers });
     }
     if (node.nodes && Array.isArray(node.nodes)) {
       node.nodes.forEach((nodeContent) => {
-        locateAndTransform({ node: nodeContent });
+        locateAndTransform({ node: nodeContent, transformers });
         recurseThroughCSSTree({ node: nodeContent });
       });
     }
