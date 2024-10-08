@@ -35,24 +35,33 @@ const transformedAST = cssTransformer({
         );
       },
       nodeTargetTransformer: (node) => {
-        const fontSizeDecl = node.nodes.find((n) => n.type === "decl" && n.prop === "font-size");
-        fontSizeDecl.value = "2em";
-
         const distantEarlyWarningRule = node.nodes.find((n) => {
           return n.type === "rule" && n.selector === ".distant-early-warning";
         });
-        const colorDecl = distantEarlyWarningRule.nodes.find((n) => {
-          return n.type === "decl" && n.prop === "color";
-        });
-        colorDecl.value = "red";
-
-        const kidGlovesDecl = distantEarlyWarningRule.nodes.find((n) => {
-          return n.type === "rule" && n.selector === ".kid-gloves";
-        });
-        const fontWeightDecl = kidGlovesDecl.nodes.find((n) => {
-          return n.type === "decl" && n.prop === "font-weight";
-        });
-        fontWeightDecl.value = "normal";
+        const modifications = {
+          redSectorAFontSize: () => {
+            const fontSizeDecl = node.nodes.find(
+              (n) => n.type === "decl" && n.prop === "font-size"
+            );
+            fontSizeDecl.value = "2em";
+          },
+          distantEarlyWarningColor: () => {
+            const colorDecl = distantEarlyWarningRule.nodes.find((n) => {
+              return n.type === "decl" && n.prop === "color";
+            });
+            colorDecl.value = "red";
+          },
+          kidGlovesFontWeight: () => {
+            const kidGlovesDecl = distantEarlyWarningRule.nodes.find((n) => {
+              return n.type === "rule" && n.selector === ".kid-gloves";
+            });
+            const fontWeightDecl = kidGlovesDecl.nodes.find((n) => {
+              return n.type === "decl" && n.prop === "font-weight";
+            });
+            fontWeightDecl.value = "normal";
+          },
+        };
+        Object.keys(modifications).forEach((key) => modifications[key]());
       },
     },
   ],
