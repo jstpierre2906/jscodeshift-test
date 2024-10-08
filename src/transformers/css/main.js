@@ -36,7 +36,23 @@ const transformedAST = cssTransformer({
       },
       nodeTargetTransformer: (node) => {
         const fontSizeDecl = node.nodes.find((n) => n.type === "decl" && n.prop === "font-size");
-        fontSizeDecl && (fontSizeDecl.value = "2em");
+        fontSizeDecl.value = "2em";
+
+        const distantEarlyWarningRule = node.nodes.find((n) => {
+          return n.type === "rule" && n.selector === ".distant-early-warning";
+        });
+        const colorDecl = distantEarlyWarningRule.nodes.find((n) => {
+          return n.type === "decl" && n.prop === "color";
+        });
+        colorDecl.value = "red";
+
+        const kidGlovesDecl = distantEarlyWarningRule.nodes.find((n) => {
+          return n.type === "rule" && n.selector === ".kid-gloves";
+        });
+        const fontWeightDecl = kidGlovesDecl.nodes.find((n) => {
+          return n.type === "decl" && n.prop === "font-weight";
+        });
+        fontWeightDecl.value = "normal";
       },
     },
   ],
