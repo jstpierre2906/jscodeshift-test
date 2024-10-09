@@ -52,10 +52,10 @@ const transformedAST = cssTransformer({
             colorDecl.value = "red";
           },
           kidGlovesFontWeight: () => {
-            const kidGlovesDecl = distantEarlyWarningRule.nodes.find((n) => {
+            const kidGlovesRule = distantEarlyWarningRule.nodes.find((n) => {
               return n.type === "rule" && n.selector === ".kid-gloves";
             });
-            const fontWeightDecl = kidGlovesDecl.nodes.find((n) => {
+            const fontWeightDecl = kidGlovesRule.nodes.find((n) => {
               return n.type === "decl" && n.prop === "font-weight";
             });
             fontWeightDecl.value = "normal";
