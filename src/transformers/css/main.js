@@ -69,14 +69,13 @@ const transformedAST = cssTransformer({
           },
         };
         Object.keys(modifications).forEach((key) => {
-          const values = {};
           switch (key) {
             case "redSectorAFontSize":
-              return modifications[key](Object.assign(values, { fontSize: "2em" }));
+              return modifications[key]({ fontSize: "2em" });
             case "distantEarlyWarningColor":
-              return modifications[key](Object.assign(values, { color: "red" }));
+              return modifications[key]({ color: "red" });
             case "kidGlovesFontWeight":
-              return modifications[key](Object.assign(values, { weight: "normal" }));
+              return modifications[key]({ weight: "normal" });
           }
         });
       },
