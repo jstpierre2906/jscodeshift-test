@@ -68,16 +68,12 @@ const transformedAST = cssTransformer({
             fontWeightDecl.value = values.weight;
           },
         };
-        Object.keys(modifications).forEach((key) => {
-          switch (key) {
-            case "redSectorAFontSize":
-              return modifications[key]({ fontSize: "2em" });
-            case "distantEarlyWarningColor":
-              return modifications[key]({ color: "red" });
-            case "kidGlovesFontWeight":
-              return modifications[key]({ weight: "normal" });
-          }
-        });
+        const values = {
+          redSectorAFontSize: { fontSize: "2em" },
+          distantEarlyWarningColor: { color: "red" },
+          kidGlovesFontWeight: { weight: "normal" },
+        };
+        Object.keys(modifications).forEach((key) => modifications[key](values[key]));
       },
     },
   ],
